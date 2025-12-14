@@ -70,31 +70,64 @@
         }
 
         .controls {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
+            padding: 20px;
+            background: #111;
+            border-radius: 10px;
+            border: 2px solid #333;
         }
 
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 8px;
         }
 
         label {
             font-size: 0.85em;
             font-weight: bold;
+            color: #fff;
         }
 
         input[type="range"] {
-            width: 150px;
+            width: 100%;
+            height: 6px;
+            background: #333;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            grid-column: 1 / -1;
         }
 
         button {
-            padding: 10px 20px;
+            flex: 1;
+            padding: 12px 20px;
             border: 2px solid #fff;
             background: #000;
             color: #fff;
@@ -103,6 +136,7 @@
             cursor: pointer;
             border-radius: 5px;
             transition: all 0.3s;
+            font-size: 0.9em;
         }
 
         button:hover {
@@ -118,17 +152,17 @@
         #asciiOutput {
             background: #000;
             border: 2px solid #fff;
-            padding: 20px;
+            padding: 10px;
             font-family: 'Courier New', monospace;
-            font-size: 6px;
-            line-height: 6px;
+            font-size: 8px;
+            line-height: 8px;
             white-space: pre;
             overflow: auto;
             text-align: center;
             color: #fff;
             letter-spacing: 0;
             border-radius: 5px;
-            min-height: 400px;
+            min-height: 500px;
             width: 100%;
             max-width: 100%;
         }
@@ -149,12 +183,19 @@
         }
 
         select {
-            padding: 8px;
+            padding: 10px;
             border: 2px solid #fff;
             background: #000;
             color: #fff;
             font-family: 'Courier New', monospace;
             border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #fff;
         }
 
         @media (max-width: 768px) {
@@ -171,12 +212,12 @@
             }
 
             .controls {
-                flex-direction: column;
-                align-items: stretch;
+                grid-template-columns: 1fr;
+                padding: 15px;
             }
 
-            .control-group {
-                width: 100%;
+            .button-group {
+                flex-direction: column;
             }
 
             button {
@@ -184,10 +225,17 @@
             }
 
             #asciiOutput {
-                font-size: 3px;
-                line-height: 3px;
+                font-size: 4px;
+                line-height: 4px;
                 padding: 5px;
                 min-height: 300px;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            #asciiOutput {
+                font-size: 10px;
+                line-height: 10px;
             }
         }
     </style>
@@ -195,7 +243,7 @@
 <body>
     <div class="container">
         <h1>🎬 ASCII Video Art Generator</h1>
-        <p class="subtitle">Transforme seus vídeos e imagens em arte ASCII animada</p>
+        <p class="subtitle">Transforme seus vídeos e imagens em arte ASCII de alta qualidade</p>
 
         <div class="upload-area" id="uploadArea">
             <div class="upload-icon">📹🖼️</div>
@@ -208,24 +256,41 @@
 
         <div class="controls hidden" id="controls">
             <div class="control-group">
-                <label>Contraste: <span id="contrastValue">1.2</span></label>
-                <input type="range" id="contrastSlider" min="0.5" max="2" step="0.1" value="1.2">
+                <label>Detalhamento: <span id="detailValue">Alto</span></label>
+                <input type="range" id="detailSlider" min="1" max="3" value="2" step="1">
             </div>
 
             <div class="control-group">
-                <label>Caracteres:</label>
+                <label>Brilho: <span id="brightnessValue">1.0</span></label>
+                <input type="range" id="brightnessSlider" min="0.5" max="1.5" step="0.1" value="1.0">
+            </div>
+
+            <div class="control-group">
+                <label>Contraste: <span id="contrastValue">1.5</span></label>
+                <input type="range" id="contrastSlider" min="0.5" max="2.5" step="0.1" value="1.5">
+            </div>
+
+            <div class="control-group">
+                <label>Nitidez: <span id="sharpnessValue">1.2</span></label>
+                <input type="range" id="sharpnessSlider" min="0.5" max="2" step="0.1" value="1.2">
+            </div>
+
+            <div class="control-group">
+                <label>Estilo de Caracteres:</label>
                 <select id="charsetSelect">
-                    <option value="detailed">Detalhado (@%#*+=-:. )</option>
-                    <option value="simple">Simples (█▓▒░ )</option>
-                    <option value="dots">Pontos (●◐◑◒◓○ )</option>
-                    <option value="blocks">Blocos (■▪▫□ )</option>
-                    <option value="alphanumeric">Letras e Números (0-9A-Z)</option>
+                    <option value="detailed">Detalhado (16 níveis)</option>
+                    <option value="extended">Estendido (10 níveis)</option>
+                    <option value="simple">Simples (Blocos)</option>
+                    <option value="dots">Pontos</option>
+                    <option value="alphanumeric">Letras e Números</option>
                 </select>
             </div>
 
-            <button id="playBtn">▶️ Play</button>
-            <button id="pauseBtn" class="hidden">⏸️ Pause</button>
-            <button id="resetBtn">🔄 Resetar</button>
+            <div class="button-group">
+                <button id="playBtn">▶️ Play</button>
+                <button id="pauseBtn" class="hidden">⏸️ Pause</button>
+                <button id="resetBtn">🔄 Resetar</button>
+            </div>
         </div>
 
         <video id="video" controls></video>
@@ -246,17 +311,29 @@
         const playBtn = document.getElementById('playBtn');
         const pauseBtn = document.getElementById('pauseBtn');
         const resetBtn = document.getElementById('resetBtn');
+        const detailSlider = document.getElementById('detailSlider');
+        const detailValue = document.getElementById('detailValue');
+        const brightnessSlider = document.getElementById('brightnessSlider');
+        const brightnessValue = document.getElementById('brightnessValue');
         const contrastSlider = document.getElementById('contrastSlider');
         const contrastValue = document.getElementById('contrastValue');
+        const sharpnessSlider = document.getElementById('sharpnessSlider');
+        const sharpnessValue = document.getElementById('sharpnessValue');
         const charsetSelect = document.getElementById('charsetSelect');
         const info = document.getElementById('info');
 
         const charsets = {
-            detailed: '@%#*+=-:. ',
+            detailed: '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,"^`\'. ',
+            extended: '@%#*+=-:. ',
             simple: '█▓▒░ ',
             dots: '●◐◑◒◓○ ',
-            blocks: '■▪▫□ ',
-            alphanumeric: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ '
+            alphanumeric: '█▓▒░@#$%&0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz '
+        };
+
+        const detailLevels = {
+            1: 'Baixo',
+            2: 'Alto',
+            3: 'Máximo'
         };
 
         let canvas, ctx;
@@ -305,7 +382,7 @@
                 
                 video.addEventListener('loadedmetadata', () => {
                     controls.classList.remove('hidden');
-                    info.textContent = `Vídeo carregado: ${file.name} | Duração: ${Math.round(video.duration)}s`;
+                    info.textContent = `Vídeo carregado: ${file.name} | Duração: ${Math.round(video.duration)}s | Resolução: ${video.videoWidth}x${video.videoHeight}`;
                     initCanvas();
                 }, { once: true });
             } else if (file.type.startsWith('image/')) {
@@ -318,7 +395,7 @@
                     playBtn.style.display = 'none';
                     pauseBtn.style.display = 'none';
                     resetBtn.textContent = '🔄 Nova mídia';
-                    info.textContent = `Imagem carregada: ${file.name}`;
+                    info.textContent = `Imagem carregada: ${file.name} | Resolução: ${image.naturalWidth}x${image.naturalHeight}`;
                     initCanvas();
                     imageToAscii();
                 };
@@ -327,23 +404,33 @@
 
         function initCanvas() {
             canvas = document.createElement('canvas');
-            ctx = canvas.getContext('2d');
+            ctx = canvas.getContext('2d', { willReadFrequently: true });
+        }
+
+        function getDetailMultiplier() {
+            const detail = parseInt(detailSlider.value);
+            return detail === 1 ? 0.5 : detail === 2 ? 1 : 1.5;
         }
 
         function videoToAscii() {
             if (!video.paused && !video.ended) {
                 const containerWidth = asciiOutput.clientWidth;
                 const isMobile = window.innerWidth <= 768;
-                const charWidth = isMobile ? 3 : 6;
+                const baseCharWidth = isMobile ? 4 : 8;
+                const detailMult = getDetailMultiplier();
+                const charWidth = baseCharWidth / detailMult;
+                
                 const width = Math.floor(containerWidth / charWidth);
-                const height = Math.floor((video.videoHeight / video.videoWidth) * width * 0.5);
+                const height = Math.floor((video.videoHeight / video.videoWidth) * width * 0.45);
                 
                 canvas.width = width;
                 canvas.height = height;
                 
                 ctx.drawImage(video, 0, 0, width, height);
-                const imageData = ctx.getImageData(0, 0, width, height);
                 
+                applyImageEnhancements();
+                
+                const imageData = ctx.getImageData(0, 0, width, height);
                 const ascii = convertToAscii(imageData, width, height);
                 asciiOutput.textContent = ascii;
                 
@@ -354,22 +441,81 @@
         function imageToAscii() {
             const containerWidth = asciiOutput.clientWidth;
             const isMobile = window.innerWidth <= 768;
-            const charWidth = isMobile ? 3 : 6;
+            const baseCharWidth = isMobile ? 4 : 8;
+            const detailMult = getDetailMultiplier();
+            const charWidth = baseCharWidth / detailMult;
+            
             const width = Math.floor(containerWidth / charWidth);
-            const height = Math.floor((image.naturalHeight / image.naturalWidth) * width * 0.5);
+            const height = Math.floor((image.naturalHeight / image.naturalWidth) * width * 0.45);
             
             canvas.width = width;
             canvas.height = height;
             
             ctx.drawImage(image, 0, 0, width, height);
-            const imageData = ctx.getImageData(0, 0, width, height);
             
+            applyImageEnhancements();
+            
+            const imageData = ctx.getImageData(0, 0, width, height);
             const ascii = convertToAscii(imageData, width, height);
             asciiOutput.textContent = ascii;
         }
 
-        function convertToAscii(imageData, width, height) {
+        function applyImageEnhancements() {
+            const brightness = parseFloat(brightnessSlider.value);
             const contrast = parseFloat(contrastSlider.value);
+            const sharpness = parseFloat(sharpnessSlider.value);
+            
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            // Aplicar brilho e contraste
+            const factor = (259 * (contrast * 128 + 255)) / (255 * (259 - contrast * 128));
+            
+            for (let i = 0; i < data.length; i += 4) {
+                // Brilho
+                data[i] *= brightness;
+                data[i + 1] *= brightness;
+                data[i + 2] *= brightness;
+                
+                // Contraste
+                data[i] = factor * (data[i] - 128) + 128;
+                data[i + 1] = factor * (data[i + 1] - 128) + 128;
+                data[i + 2] = factor * (data[i + 2] - 128) + 128;
+                
+                // Limitar valores
+                data[i] = Math.max(0, Math.min(255, data[i]));
+                data[i + 1] = Math.max(0, Math.min(255, data[i + 1]));
+                data[i + 2] = Math.max(0, Math.min(255, data[i + 2]));
+            }
+            
+            // Aplicar nitidez (sharpening)
+            if (sharpness > 1) {
+                const tempData = new Uint8ClampedArray(data);
+                const w = canvas.width;
+                const h = canvas.height;
+                const weight = sharpness - 1;
+                
+                for (let y = 1; y < h - 1; y++) {
+                    for (let x = 1; x < w - 1; x++) {
+                        for (let c = 0; c < 3; c++) {
+                            const idx = (y * w + x) * 4 + c;
+                            const center = tempData[idx];
+                            const sum = (
+                                tempData[idx - 4] +
+                                tempData[idx + 4] +
+                                tempData[idx - w * 4] +
+                                tempData[idx + w * 4]
+                            ) / 4;
+                            data[idx] = Math.max(0, Math.min(255, center + (center - sum) * weight));
+                        }
+                    }
+                }
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        function convertToAscii(imageData, width, height) {
             const charset = charsets[charsetSelect.value];
             let ascii = '';
             
@@ -380,10 +526,11 @@
                     const g = imageData.data[offset + 1];
                     const b = imageData.data[offset + 2];
                     
-                    const brightness = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-                    const adjusted = Math.pow(brightness, 1 / contrast);
-                    const charIndex = Math.floor(adjusted * (charset.length - 1));
+                    // Melhor cálculo de luminância
+                    const brightness = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
                     
+                    // Mapear para índice do charset
+                    const charIndex = Math.floor(brightness * (charset.length - 1));
                     ascii += charset[charIndex];
                 }
                 ascii += '\n';
@@ -426,17 +573,28 @@
             }
         });
 
+        detailSlider.addEventListener('input', (e) => {
+            detailValue.textContent = detailLevels[e.target.value];
+            if (isImage) imageToAscii();
+        });
+
+        brightnessSlider.addEventListener('input', (e) => {
+            brightnessValue.textContent = e.target.value;
+            if (isImage) imageToAscii();
+        });
+
         contrastSlider.addEventListener('input', (e) => {
             contrastValue.textContent = e.target.value;
-            if (isImage) {
-                imageToAscii();
-            }
+            if (isImage) imageToAscii();
+        });
+
+        sharpnessSlider.addEventListener('input', (e) => {
+            sharpnessValue.textContent = e.target.value;
+            if (isImage) imageToAscii();
         });
 
         charsetSelect.addEventListener('change', () => {
-            if (isImage) {
-                imageToAscii();
-            }
+            if (isImage) imageToAscii();
         });
 
         video.addEventListener('ended', () => {
