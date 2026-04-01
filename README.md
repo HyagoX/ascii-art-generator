@@ -1,23 +1,20 @@
-# 🖼️ Image to ASCII Art Converter
+# 🎬 ASCII Video Art Generator (Real-Time)
 
-A web-based tool that transforms standard images into stylized ASCII art using pixel luminosity mapping. This project explores the intersection of computer vision basics and mathematical data representation.
+A high-performance web tool that transforms live video streams and images into ASCII art using HTML5 Canvas and advanced image processing algorithms.
 
-## 🚀 Overview
-The application processes uploaded images by analyzing the brightness (luminosity) of each pixel and mapping it to a specific character set. It's a practical example of how data can be reinterpreted and visualized through different formats.
+## 🚀 Key Features
+- **Real-Time Video Rendering:** Processes video frames on the fly to generate dynamic ASCII animations.
+- **Advanced Image Controls:** Interactive sliders for Brightness, Contrast, and Sharpness enhancement.
+- **Customizable Detail Levels:** Adjustable resolution scaling (Low, High, Maximum) for different performance needs.
+- **Multiple Charsets:** Choose between 5 different artistic styles, from detailed 16-level characters to simple block dots.
 
-## 🛠️ Tech Stack
-- **Languages:** HTML5, CSS3, JavaScript (ES6+).
-- **Core Logic:** Pixel manipulation, Grayscale conversion, and Character mapping.
+## 🛠️ Technical Implementation
+- **Luminance Calculation:** Uses the specialized formula `(0.2126 * R + 0.7152 * G + 0.0722 * B)` for accurate grayscale mapping.
+- **Canvas Manipulation:** Direct pixel data access via `getImageData` for custom image filtering (Sharpening and Contrast algorithms).
+- **Responsive Interface:** Custom CSS with a "Terminal" aesthetic, fully optimized for mobile and desktop displays.
 
-## 🧪 Mathematical Concept
-The core logic relies on a luminosity formula to calculate the "gray" value of a pixel:
-`Gray = 0.299*R + 0.587*G + 0.114*B`
-This value then determines which ASCII character (from `.` to `@`) best represents that specific area of the image.
-
-## 🎨 Features
-- Real-time image processing.
-- Responsive UI for desktop and mobile.
-- Custom character sets for different artistic effects.
+## 🧪 Mathematical Concepts Applied
+This project applies digital signal processing concepts, such as convolution kernels for sharpening and linear transformations for contrast adjustment, all implemented in vanilla JavaScript.
 
 ---
-*Developed as part of my studies in Applied Mathematics and Web Technologies.*
+*Developed as part of my studies in Applied Mathematics and Computational Logic.*
